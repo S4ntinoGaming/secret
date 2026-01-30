@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Pacifico', cursive;
+    text-align: center;
+    overflow: hidden;
+    background: url('me.jpg') no-repeat center center;
+    background-size: cover;
+  }
+
+  #container {
+    width: 360px;
+  }
+
+  #question {
+    display: inline-block;
+    padding: 10px 18px;
+    margin-bottom: 16px;
+    font-size: 22px;
+    font-weight: bold;
+    background: #ffd6e8;
+    color: #5a0033;
+    border-radius: 999px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  }
+
+  #card {
+    background: #ffe1ef;
+    padding: 32px;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+    position: relative;
+  }
+
+  #sticker {
+    width: 150px;
+    margin-bottom: 12px;
+  }
+
+  .options button,
+  #yes, #no {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    font-size: 15px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'Pacifico', cursive;
+    transition: transform 0.15s;
+  }
+
+  .options button {
+    background: #d94a8c;
+    color: white;
+  }
+
+  #yes {
+    background: red;
+    color: white;
+    margin-top: 14px;
+  }
+
+  #no {
+    background: #f2b3cf;
+    position: relative;
+  }
+
+  canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  @keyframes shake {
+    0% { transform: translateX(0px); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0px); }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div id="container">
+  <div id="question"></div>
+  <div id="card"></div>
+</div>
+
+<script>
+const question = document.getElementById("question");
+const card = document.getElementById("card");
+let yesScale = 1;
+let correctScale = 1.0;
+
+function shake(button) {
+  button.style.animation = 'shake 0.3s';
+  setTimeout(() => { button.style.animation = ''; }, 300);
+}
+
+function q1() {
+  question.textContent = "When did you reject me?";
+  card.innerHTML = `
+    <div class="options">
+      <button onclick="q2()">a. February 14</button>
+      <button onclick="wrong(this)">b. January 14</button>
+      <button onclick="wrong(this)">c. February 15</button>
+      <button onclick="wrong(this)">d. January 15</button>
+    </div>
+  `;
+}
+
+function q2() {
+  question.textContent = "What is my favorite color?";
+  card.innerHTML = `
+    <div class="options">
+      <button onclick="wrong(this)" style="background:#4a90e2;">a. Blue</button>
+      <button onclick="q3()" id="correct2" style="background:#ff0000;">b. Red</button>
+      <button onclick="wrong(this)" style="background:#8e44ad;">c. Violet</button>
+      <button onclick="wrong(this)" style="background:#3f51b5;">d. Indigo</button>
+    </div>
+  `;
+}
+
+function q3() {
+  question.textContent = "When was the first time I went to your house?";
+  card.innerHTML = `
+    <div class="options">
+      <button onclick="wrong(this)">a. April 28</button>
+      <button onclick="q4()" id="correct3">b. April 27</button>
+      <button onclick="wrong(this)">c. April 26</button>
+      <button onclick="wrong(this)">d. April 25</button>
+    </div>
+  `;
+}
+
+function q4() {
+  question.textContent = "What was the first dish we cooked together?";
+  card.innerHTML = `
+    <div class="options">
+      <button onclick="wrong(this)">a. Mashed Potatoes</button>
+      <button onclick="wrong(this)">b. Chicken Wings</button>
+      <button onclick="q5()" id="correct4">c. Buttered Shrimp</button>
+      <button onclick="wrong(this)">d. Calamares</button>
+    </div>
+  `;
+}
+
+function q5() {
+  question.textContent = "When was the first time you said 'I love you' to me?";
+  card.innerHTML = `
+    <div class="options">
+      <button onclick="wrong(this)">a. June 18</button>
+      <button onclick="wrong(this)">b. June 19</button>
+      <button onclick="finalQ()" id="correct5">c. June 20</button>
+      <button onclick="wrong(this)">d. June 21</button>
+    </div>
+  `;
+}
+
+function finalQ() {
+  question.textContent = "Can you be my Valentine?";
+  card.innerHTML = `
+    <img id="sticker" src="peach-goma.gif">
+    <button id="yes">Yes</button>
+    <button id="no">No</button>
+  `;
+
+  const yesBtn = document.getElementById("yes");
+  const noBtn = document.getElementById("no");
+
+  noBtn.onclick = () => {
+    noBtn.style.position = "absolute";
+    noBtn.style.left = Math.random() * 160 + "px";
+    noBtn.style.top = Math.random() * 100 + 120 + "px";
+    yesScale += 0.3;
+    yesBtn.style.transform = `scale(${yesScale})`;
+  };
+
+  yesBtn.onclick = () => {
+    question.textContent = "";
+    card.innerHTML = "<h1>Yay!</h1><p>You are my Valentine.</p>";
+    startConfetti();
+  };
+}
+
+function wrong(button) {
+  shake(button);
+  correctScale += 0.05;
+  const correctBtn = button.parentElement.querySelector('[id^="correct"]');
+  if(correctBtn) correctBtn.style.transform = `scale(${correctScale})`;
+}
+
+/* confetti */
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+let confetti = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+function startConfetti() {
+  confetti = [];
+  for (let i = 0; i < 200; i++) {
+    confetti.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      r: Math.random() * 6 + 4,
+      vx: Math.random() * 2 - 1,
+      vy: Math.random() * 3 + 2,
+      c: `hsl(${Math.random() * 360},100%,50%)`
+    });
+  }
+  requestAnimationFrame(updateConfetti);
+}
+
+function updateConfetti() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  confetti.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = p.c;
+    ctx.fill();
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.y > canvas.height) p.y = -10;
+  });
+  requestAnimationFrame(updateConfetti);
+}
+
+q1();
+</script>
+
+</body>
+</html>
