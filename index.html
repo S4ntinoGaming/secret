@@ -112,6 +112,16 @@ function shake(button) {
   setTimeout(() => { button.style.animation = ''; }, 300);
 }
 
+function wrong(button) {
+  shake(button);
+  const correctBtn = button.parentElement.querySelector('[id^="correct"]');
+  if(correctBtn) {
+    correctScale += 0.05;
+    correctBtn.style.transform = `scale(${correctScale})`;
+  }
+}
+
+// Questions
 function q1() {
   question.textContent = "When did you reject me?";
   card.innerHTML = `
@@ -172,8 +182,12 @@ function q5() {
   `;
 }
 
+// Final Question
 function finalQ() {
-  question.textContent = "Can you be my Valentine?";
+  // Change font to a clean readable one for the final question
+  question.style.fontFamily = "Arial, sans-serif";
+  
+  question.textContent = "Can I be your Valentine?:3";
   card.innerHTML = `
     <img id="sticker" src="peach-goma.gif">
     <button id="yes">Yes</button>
@@ -183,29 +197,39 @@ function finalQ() {
   const yesBtn = document.getElementById("yes");
   const noBtn = document.getElementById("no");
 
+  const comments = [
+    "WHAT",
+    "REALLY",
+    "U R REJECTING ME AGAIN?",
+    "SIGE AH",
+    "DON KANA SA EX MO",
+    "3 DAYS NAG ILY KANA SAKANYA",
+    "SAKIN MONTHS",
+    "HMPP!!!"
+  ];
+  let clickCount = 0;
+
   noBtn.onclick = () => {
     noBtn.style.position = "absolute";
     noBtn.style.left = Math.random() * 160 + "px";
     noBtn.style.top = Math.random() * 100 + 120 + "px";
+
+    question.textContent = comments[clickCount] || comments[comments.length - 1];
+    clickCount++;
+
     yesScale += 0.3;
     yesBtn.style.transform = `scale(${yesScale})`;
   };
 
   yesBtn.onclick = () => {
     question.textContent = "";
-    card.innerHTML = "<h1>Yay!</h1><p>You are my Valentine.</p>";
+    card.innerHTML = "<h1>YAYY!!</h1><p>I am your Valentine :33</p>";
     startConfetti();
   };
 }
 
-function wrong(button) {
-  shake(button);
-  correctScale += 0.05;
-  const correctBtn = button.parentElement.querySelector('[id^="correct"]');
-  if(correctBtn) correctBtn.style.transform = `scale(${correctScale})`;
-}
 
-/* confetti */
+/* Confetti */
 const canvas = document.getElementById("confetti");
 const ctx = canvas.getContext("2d");
 let confetti = [];
@@ -246,6 +270,7 @@ function updateConfetti() {
   requestAnimationFrame(updateConfetti);
 }
 
+// Start
 q1();
 </script>
 
